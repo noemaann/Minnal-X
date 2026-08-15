@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="MINNAL-X: Fictional Augmented Reality Superpower Interface using Web Technologies" />
+    <title>MINNAL-X // Fictional AR Superpower Interface</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>" />
+  </head>
+  <body>
+    <!-- Cinematic Startup Overlay -->
+    <div id="startup-overlay" class="startup-overlay">
+      <div class="startup-backdrop-grid"></div>
+      <div class="startup-scanlines"></div>
+      
+      <div class="startup-modal">
+        <!-- Sci-Fi Corner Accents -->
+        <div class="hud-corner tl"></div>
+        <div class="hud-corner tr"></div>
+        <div class="hud-corner bl"></div>
+        <div class="hud-corner br"></div>
+
+        <div class="startup-logo-wrapper">
+          <div class="startup-icon-glow">
+            <svg viewBox="0 0 24 24" class="startup-lightning-svg">
+              <path d="M13 10V3L4 14h7v7l9-11h-7z" />
+            </svg>
+          </div>
+          <h1 class="startup-title">MINNAL-X</h1>
+          <div class="startup-subtitle">AUGMENTED SUPERPOWER INTERFACE</div>
+        </div>
+
+        <div class="startup-terminal-box">
+          <div class="startup-init-header" id="startup-init-status">
+            <span class="startup-spinner"></span> SYSTEM INITIALIZING...
+          </div>
+          
+          <div class="startup-log-list" id="startup-log-list">
+            <div class="startup-log-row" id="log-camera" style="opacity: 0;">
+              <span class="log-label">CAMERA</span>
+              <span class="log-dots">........................</span>
+              <span class="log-status ready">READY</span>
+            </div>
+            <div class="startup-log-row" id="log-tracking" style="opacity: 0;">
+              <span class="log-label">HAND TRACKING</span>
+              <span class="log-dots">................</span>
+              <span class="log-status ready">READY</span>
+            </div>
+            <div class="startup-log-row" id="log-gestures" style="opacity: 0;">
+              <span class="log-label">GESTURE ENGINE</span>
+              <span class="log-dots">...............</span>
+              <span class="log-status ready">READY</span>
+            </div>
+            <div class="startup-log-row" id="log-energy" style="opacity: 0;">
+              <span class="log-label">ENERGY SYSTEM</span>
+              <span class="log-dots">................</span>
+              <span class="log-status ready">READY</span>
+            </div>
+          </div>
+
+          <div class="startup-online-badge" id="startup-online-badge" style="opacity: 0;">
+            <div class="online-indicator"></div>
+            <span>MINNAL-X ONLINE</span>
+          </div>
+        </div>
+
+        <div class="startup-action-container" id="startup-action-container" style="opacity: 0;">
+          <button id="btn-activate-minnal" class="startup-activate-btn">
+            <span class="btn-glow-layer"></span>
+            <span class="btn-text-content">⚡ ACTIVATE MINNAL MODE ⚡</span>
+          </button>
+          <div class="startup-hint">Clicking activate requests camera access and begins glove materialization.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Header bar -->
+    <header>
+      <div class="logo-container">
+        <div class="logo-icon">
+          <svg viewBox="0 0 24 24">
+            <path d="M13 10V3L4 14h7v7l9-11h-7z" />
+          </svg>
+        </div>
+        <h1>MINNAL-X</h1>
+      </div>
+      <div class="system-status">
+        <div class="status-dot" id="system-status-dot" style="background-color: #6e6e6e; box-shadow: none; width: 8px; height: 8px; border-radius: 0; display: inline-block;"></div>
+        <span id="txt-system-mode" style="font-family: var(--font-display); font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.1em; margin-left: 0.4rem;">NORMAL MODE</span>
+      </div>
+    </header>
+
+    <!-- Main Workspace Container -->
+    <main class="app-container">
+      <!-- Camera/AR Viewfinder Section -->
+      <section class="viewfinder-container">
+        <div class="viewport-wrapper">
+          <!-- Mirrored Video Stream -->
+          <video id="webcam" autoplay playsinline muted style="display: none;"></video>
+          
+          <!-- Mirrored 2D Canvas Overlay -->
+          <canvas id="overlay"></canvas>
+          
+          <!-- Cyber HUD corner decorations -->
+          <div class="hud-corner tl"></div>
+          <div class="hud-corner tr"></div>
+          <div class="hud-corner bl"></div>
+          <div class="hud-corner br"></div>
+        </div>
+
+        <div class="camera-controls">
+          <button id="btn-start-camera" class="cyber-button">
+            Start Camera
+          </button>
+          <button id="btn-stop-camera" class="cyber-button" disabled>
+            Stop Camera
+          </button>
+          <div style="margin-left: auto; display: flex; align-items: center; gap: 0.6rem;">
+            <span id="camera-status-dot" style="width: 8px; height: 8px; border-radius: 0; background-color: var(--neon-red); box-shadow: none; display: inline-block;"></span>
+            <span id="txt-camera-status" style="font-family: var(--font-display); font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.1em;">Camera Inactive</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Sidebar Status & Simulation Control HUD -->
+      <aside class="hud-panel">
+        <!-- Power Station -->
+        <div>
+          <h2 class="panel-section-title">Interface Matrix</h2>
+          <div class="power-status-card">
+            <div class="power-status-row">
+              <span class="power-label">Active Power:</span>
+              <span id="txt-active-power" class="power-value">None</span>
+            </div>
+            <div class="power-status-row">
+              <span class="power-label">Glove Status:</span>
+              <span id="txt-glove-status" class="power-value" style="color: var(--neon-red);">NO HAND DETECTED</span>
+            </div>
+            <div class="power-status-row">
+              <span class="power-label">Hand Position:</span>
+              <span id="txt-hand-position" class="power-value" style="color: var(--neon-cyan);">N/A</span>
+            </div>
+            <div class="power-status-row">
+              <span class="power-label">Gesture:</span>
+              <span id="txt-gesture" class="power-value" style="color: var(--neon-gold);">UNKNOWN</span>
+            </div>
+            <div class="power-status-row">
+              <span class="power-label">Confidence:</span>
+              <span id="txt-gesture-confidence" class="power-value" style="color: var(--neon-gold);">0%</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Energy charging status bar -->
+        <div class="meter-container">
+          <div class="meter-header">
+            <span>Energy Capacitor</span>
+            <span id="txt-charge">0%</span>
+          </div>
+          <div class="meter-bar-outer">
+            <div id="bar-charge" class="meter-bar-inner"></div>
+          </div>
+        </div>
+
+        <!-- Simulated Power Triggers -->
+        <div>
+          <h2 class="panel-section-title">Interface Sandbox</h2>
+          <div class="sim-controls">
+            <button id="btn-sim-charge" class="cyber-button secondary">Simulate Charge</button>
+            <button id="btn-sim-zap" class="cyber-button secondary">Trigger Zap</button>
+          </div>
+        </div>
+
+        <!-- Gesture Catalog -->
+        <div>
+          <h2 class="panel-section-title">Gesture Catalog</h2>
+          <div class="gesture-list">
+            <div id="gesture-palm" class="gesture-item">
+              <div class="gesture-indicator"></div>
+              <span class="gesture-name">Open Palm</span>
+              <span class="gesture-desc">Charge Shield</span>
+            </div>
+            <div id="gesture-fist" class="gesture-item">
+              <div class="gesture-indicator"></div>
+              <span class="gesture-name">Fist</span>
+              <span class="gesture-desc">Lightning Punch</span>
+            </div>
+            <div id="gesture-point" class="gesture-item">
+              <div class="gesture-indicator"></div>
+              <span class="gesture-name">Point</span>
+              <span class="gesture-desc">Target Bolt</span>
+            </div>
+            <div id="gesture-twofinger" class="gesture-item">
+              <div class="gesture-indicator"></div>
+              <span class="gesture-name">Two Finger</span>
+              <span class="gesture-desc">Plasma Beam</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Instructions -->
+        <div class="instructions">
+          <strong>MINNAL-X</strong> uses webcam gestures to activate original superhero energy effects.
+          <br/><br/>
+          Click <strong>Initialize Interface</strong> to start your camera feed. Use the <strong>Sandbox</strong> buttons to test sci-fi audio synthesizers and canvas animation effects.
+        </div>
+      </aside>
+    </main>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
