@@ -1,0 +1,705 @@
+/* MINNAL-X — Swiss / International Typographic Style
+   Grid, hairlines, flush-left type, one signal color. No glow, no blur, no gradient. */
+
+:root {
+  --bg-primary: #ffffff;
+  --bg-secondary: #f4f4f2;
+
+  /* Swiss signal palette — ink, paper, one red */
+  --ink: #111111;
+  --paper: #ffffff;
+  --red: #d5001c;
+  --line: #cfcfcc;
+  --line-strong: #111111;
+  --gray: #6e6e6e;
+
+  /* Compatibility aliases — original variable names, remapped to the new palette
+     so inline JS colors resolve without editing every call site. */
+  --neon-cyan: var(--ink);
+  --neon-blue: var(--ink);
+  --neon-purple: var(--red);
+  --neon-gold: var(--red);
+  --neon-red: var(--red);
+
+  --text-main: var(--ink);
+  --text-muted: var(--gray);
+
+  --font-display: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --font-body: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --font-mono: 'Courier New', Courier, monospace;
+
+  --glass-border: var(--line);
+  --glass-bg: var(--paper);
+
+  --grid-gap: 2rem;
+  --radius: 0;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--paper);
+  color: var(--ink);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+  font-size: 1rem;
+  letter-spacing: 0;
+  line-height: 1.4;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Header UI */
+header {
+  padding: 1.25rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 3px solid var(--line-strong);
+  background: var(--paper);
+  z-index: 10;
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.logo-icon {
+  width: 2.25rem;
+  height: 2.25rem;
+  background: var(--red);
+  clip-path: none;
+  border-radius: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logo-icon svg {
+  width: 1.15rem;
+  height: 1.15rem;
+  fill: #fff;
+}
+
+h1 {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  background: none;
+  -webkit-background-clip: unset;
+  -webkit-text-fill-color: unset;
+  text-shadow: none;
+}
+
+.system-status {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-display);
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--ink);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 0;
+  background-color: var(--red);
+  box-shadow: none;
+  animation: none;
+}
+
+/* Main Layout */
+.app-container {
+  display: grid;
+  grid-template-columns: 1fr 360px;
+  gap: 0;
+  max-width: 1400px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 0;
+  flex: 1;
+  border-left: 1px solid var(--line);
+}
+
+@media (max-width: 1024px) {
+  .app-container {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Viewfinder Section */
+.viewfinder-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding: 2rem;
+  border-right: 1px solid var(--line);
+}
+
+.viewport-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
+  background-color: var(--bg-secondary);
+  border-radius: 0;
+  border: 1px solid var(--line-strong);
+  box-shadow: none;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.viewport-wrapper::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: none;
+  pointer-events: none;
+  z-index: 1;
+}
+
+#webcam {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scaleX(-1); /* Mirror camera feed */
+  display: block;
+}
+
+#overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+  pointer-events: none;
+  transform: scaleX(-1); /* Match mirrored video */
+}
+
+/* Frame corner marks — Swiss register marks, not sci-fi HUD glow */
+.hud-corner {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border: 2px solid var(--red);
+  z-index: 3;
+  pointer-events: none;
+}
+.hud-corner.tl { top: 10px; left: 10px; border-right: none; border-bottom: none; }
+.hud-corner.tr { top: 10px; right: 10px; border-left: none; border-bottom: none; }
+.hud-corner.bl { bottom: 10px; left: 10px; border-right: none; border-top: none; }
+.hud-corner.br { bottom: 10px; right: 10px; border-left: none; border-top: none; }
+
+.camera-controls {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1.25rem;
+}
+
+/* Control Panel */
+.hud-panel {
+  background: var(--paper);
+  backdrop-filter: none;
+  border: none;
+  border-radius: 0;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  box-shadow: none;
+}
+
+.panel-section-title {
+  font-family: var(--font-display);
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--ink);
+  border-left: none;
+  border-bottom: 3px solid var(--line-strong);
+  padding-left: 0;
+  padding-bottom: 0.5rem;
+  margin-bottom: 0.9rem;
+  letter-spacing: 0.08em;
+}
+
+/* Power Grid Dashboard */
+.power-status-card {
+  background: transparent;
+  border: none;
+  border-top: 1px solid var(--line);
+  border-radius: 0;
+  padding: 0;
+}
+
+.power-status-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.55rem 0;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 0;
+}
+
+.power-label {
+  color: var(--gray);
+  font-size: 0.85rem;
+}
+
+.power-value {
+  font-family: var(--font-display);
+  color: var(--ink) !important;
+  font-weight: 700;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+}
+
+/* Buttons — flat, rectangular, ink or red */
+.cyber-button {
+  background: var(--paper);
+  border: 1px solid var(--line-strong);
+  color: var(--ink);
+  padding: 0.7rem 1.4rem;
+  font-family: var(--font-display);
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  border-radius: 0;
+  cursor: pointer;
+  transition: background-color 0.12s ease, color 0.12s ease;
+  position: relative;
+  overflow: hidden;
+  box-shadow: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.cyber-button:hover:not(:disabled) {
+  background: var(--ink);
+  color: var(--paper);
+  box-shadow: none;
+  text-shadow: none;
+}
+
+.cyber-button:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.cyber-button:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.cyber-button.active {
+  background: var(--red);
+  color: #fff;
+  border-color: var(--red);
+  box-shadow: none;
+}
+
+.cyber-button.secondary {
+  border-color: var(--line-strong);
+  color: var(--ink);
+  box-shadow: none;
+}
+
+.cyber-button.secondary:hover:not(:disabled) {
+  background: var(--red);
+  color: #fff;
+  border-color: var(--red);
+  box-shadow: none;
+  text-shadow: none;
+}
+
+/* Progress Meter */
+.meter-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.meter-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--ink);
+}
+
+.meter-bar-outer {
+  height: 8px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--line-strong);
+  border-radius: 0;
+  overflow: hidden;
+  position: relative;
+}
+
+.meter-bar-inner {
+  height: 100%;
+  width: 0%;
+  background: var(--red);
+  box-shadow: none;
+  transition: width 0.1s linear;
+}
+
+/* Simulation Controls */
+.sim-controls {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+/* Gesture Catalog UI */
+.gesture-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.gesture-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.65rem 0;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--line);
+  border-radius: 0;
+  font-size: 0.88rem;
+}
+
+.gesture-indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 0;
+  background: var(--line-strong);
+  flex-shrink: 0;
+}
+
+.gesture-item.active {
+  border-color: var(--line);
+  background: transparent;
+}
+
+.gesture-item.active .gesture-indicator {
+  background: var(--red);
+  box-shadow: none;
+}
+
+.gesture-name {
+  font-weight: 700;
+}
+
+.gesture-desc {
+  color: var(--gray);
+  font-size: 0.8rem;
+  margin-left: auto;
+}
+
+/* Instructions card */
+.instructions {
+  background: var(--bg-secondary);
+  border: none;
+  border-left: 3px solid var(--red);
+  border-radius: 0;
+  padding: 1rem 1.25rem;
+  font-size: 0.85rem;
+  color: var(--gray);
+  line-height: 1.5;
+}
+
+.instructions strong {
+  color: var(--ink);
+}
+
+/* Animations */
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+}
+
+/* ==========================================================================
+   Startup Sequence Overlay — Swiss cover sheet
+   ========================================================================== */
+
+.startup-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--paper);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  transition: opacity 0.4s ease, visibility 0.4s;
+  overflow: hidden;
+}
+
+.startup-overlay.hidden {
+  opacity: 0;
+  transform: none;
+  pointer-events: none;
+  visibility: hidden;
+}
+
+.startup-backdrop-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(var(--line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--line) 1px, transparent 1px);
+  background-size: 48px 48px;
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+.startup-scanlines {
+  display: none;
+}
+
+.startup-modal {
+  position: relative;
+  max-width: 560px;
+  width: 92%;
+  padding: 3rem 2.5rem;
+  background: var(--paper);
+  border: 1px solid var(--line-strong);
+  border-radius: 0;
+  box-shadow: none;
+  text-align: left;
+  z-index: 2;
+  animation: none;
+}
+
+.startup-logo-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-bottom: 0.5rem;
+}
+
+.startup-icon-glow {
+  width: 44px;
+  height: 44px;
+  border-radius: 0;
+  background: var(--red);
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: none;
+  margin-bottom: 1rem;
+  animation: none;
+}
+
+.startup-lightning-svg {
+  width: 26px;
+  height: 26px;
+  fill: #fff;
+  filter: none;
+}
+
+.startup-title {
+  font-family: var(--font-display);
+  font-size: 2.4rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  text-shadow: none;
+  margin: 0;
+  line-height: 1.1;
+}
+
+.startup-subtitle {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: var(--red);
+  margin-top: 0.5rem;
+  text-transform: uppercase;
+}
+
+.startup-terminal-box {
+  background: var(--bg-secondary);
+  border: none;
+  border-top: 3px solid var(--line-strong);
+  border-radius: 0;
+  margin: 1.75rem 0;
+  padding: 1.25rem 1.5rem;
+  text-align: left;
+  font-family: var(--font-mono);
+  box-shadow: none;
+}
+
+.startup-init-header {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--ink);
+  letter-spacing: 0.1em;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 0.9rem;
+  text-shadow: none;
+  text-transform: uppercase;
+}
+
+.startup-spinner {
+  width: 8px;
+  height: 8px;
+  border: 2px solid var(--line);
+  border-top-color: var(--red);
+  border-radius: 50%;
+  display: inline-block;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.startup-log-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.startup-log-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+  transition: opacity 0.3s ease;
+  transform: none;
+}
+
+.startup-log-row.visible {
+  opacity: 1 !important;
+  transform: none;
+}
+
+.log-label {
+  color: var(--ink);
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.log-dots {
+  color: var(--line);
+  flex: 1;
+  text-align: center;
+  overflow: hidden;
+  margin: 0 0.5rem;
+  user-select: none;
+}
+
+.log-status.ready {
+  color: var(--red);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-shadow: none;
+  white-space: nowrap;
+}
+
+.startup-online-badge {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.6rem;
+  margin-top: 1.25rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--line);
+  font-family: var(--font-display);
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--ink);
+  letter-spacing: 0.14em;
+  text-shadow: none;
+  transition: opacity 0.4s ease;
+}
+
+.startup-online-badge.visible {
+  opacity: 1 !important;
+}
+
+.online-indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 0;
+  background: var(--red);
+  box-shadow: none;
+  animation: none;
+}
+
+.startup-action-container {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  transition: opacity 0.4s ease;
+  transform: none;
+}
+
+.startup-action-container.visible {
+  opacity: 1 !important;
+  transform: none;
+}
+
+.startup-activate-btn {
+  position: relative;
+  width: 100%;
+  padding: 1rem 1.8rem;
+  background: var(--red);
+  border: none;
+  border-radius: 0;
+  color: #fff;
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  box-shadow: none;
+  transition: background-color 0.15s ease;
+  overflow: hidden;
+  animation: none;
+}
+
+.startup-activate-btn:hover {
+  background: var(--ink);
+  box-shadow: none;
+}
+
+.startup-activate-btn:active {
+  transform: translateY(1px);
+}
+
+.startup-hint {
+  font-size: 0.72rem;
+  color: var(--gray);
+  margin-top: 0.75rem;
+  letter-spacing: 0.01em;
+  line-height: 1.4;
+}
